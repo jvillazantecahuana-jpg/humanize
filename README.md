@@ -4,9 +4,9 @@
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/humanize.svg?logo=python&logoColor=FFE873)](https://pypi.org/project/humanize/)
 [![Documentation Status](https://readthedocs.org/projects/python-humanize/badge/?version=latest)](https://humanize.readthedocs.io/en/latest/?badge=latest)
 [![PyPI downloads](https://img.shields.io/pypi/dm/humanize.svg)](https://pypistats.org/packages/humanize)
-[![GitHub Actions status](https://github.com/python-humanize/humanize/workflows/Test/badge.svg)](https://github.com/python-humanize/humanize/actions)
-[![codecov](https://codecov.io/gh/python-humanize/humanize/branch/main/graph/badge.svg)](https://codecov.io/gh/python-humanize/humanize)
-[![MIT License](https://img.shields.io/github/license/python-humanize/humanize.svg)](LICENCE)
+[![GitHub Actions status](https://github.com/talonwr/humanize/workflows/Test/badge.svg)](https://github.com/talonwr/humanize/actions)
+[![codecov](https://codecov.io/gh/talonwr/humanize/branch/main/graph/badge.svg)](https://codecov.io/gh/talonwr/humanize)
+[![MIT License](https://img.shields.io/github/license/talonwr/humanize.svg)](LICENCE)
 [![Tidelift](https://tidelift.com/badges/package/pypi/humanize)](https://tidelift.com/subscription/pkg/pypi-humanize?utm_source=pypi-humanize&utm_medium=badge)
 
 This modest package contains various common humanization utilities, like turning a
@@ -65,7 +65,7 @@ python3 -m pip install --upgrade humanize
 ### From source
 
 ```bash
-git clone https://github.com/python-humanize/humanize
+git clone https://github.com/talonwr/humanize
 cd humanize
 python3 -m pip install -e .
 ```
@@ -96,7 +96,7 @@ python3 -m pip install -e .
 >>> humanize.naturalday(dt.datetime.now())
 'today'
 >>> humanize.naturaldelta(dt.timedelta(seconds=1001))
-'16 minutes'
+'17 minutes'
 >>> humanize.naturalday(dt.datetime.now() - dt.timedelta(days=1))
 'yesterday'
 >>> humanize.naturalday(dt.date(2007, 6, 5))
