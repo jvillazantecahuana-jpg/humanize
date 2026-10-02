@@ -858,6 +858,22 @@ def test_precisedelta_bogus_call() -> None:
         humanize.naturaltime(1, minimum_unit="")
 
 
+def test_precisedelta_invalid_units() -> None:
+    # Unknown unit names raise ValueError (not a bare KeyError) — issue #6.
+    with pytest.raises(ValueError, match="Minimum unit 'fortnights' not supported"):
+        humanize.precisedelta(1, minimum_unit="fortnights")
+
+    with pytest.raises(ValueError, match="Suppress unit 'fortnights' not supported"):
+        humanize.precisedelta(1, suppress=["fortnights"])
+
+    # Non-string input is invalid too, not an AttributeError.
+    with pytest.raises(ValueError, match="Minimum unit '5' not supported"):
+        humanize.naturaldelta(1, minimum_unit=5)
+
+    with pytest.raises(ValueError, match="Minimum unit '5' not supported"):
+        humanize.precisedelta(1, minimum_unit=5)
+
+
 def test_time_unit() -> None:
     years, minutes = time.Unit["YEARS"], time.Unit["MINUTES"]
     assert minutes < years
