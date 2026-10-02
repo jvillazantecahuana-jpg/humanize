@@ -363,3 +363,93 @@ msgstr "دیروز"
 #, python-format
 msgid "%s and %s"
 msgstr "%s و %s"
+
+#: src/humanize/filesize.py:15
+msgid "kB"
+msgstr ""
+
+#: src/humanize/filesize.py:16
+msgid "MB"
+msgstr ""
+
+#: src/humanize/filesize.py:17
+msgid "GB"
+msgstr ""
+
+#: src/humanize/filesize.py:18
+msgid "TB"
+msgstr ""
+
+#: src/humanize/filesize.py:19
+msgid "PB"
+msgstr ""
+
+#: src/humanize/filesize.py:20
+msgid "EB"
+msgstr ""
+
+#: src/humanize/filesize.py:21
+msgid "ZB"
+msgstr ""
+
+#: src/humanize/filesize.py:22
+msgid "YB"
+msgstr ""
+
+#: src/humanize/filesize.py:23
+msgid "RB"
+msgstr ""
+
+#: src/humanize/filesize.py:24
+msgid "QB"
+msgstr ""
+
+#: src/humanize/filesize.py:27
+msgid "KiB"
+msgstr ""
+
+#: src/humanize/filesize.py:28
+msgid "MiB"
+msgstr ""
+
+#: src/humanize/filesize.py:29
+msgid "GiB"
+msgstr ""
+
+#: src/humanize/filesize.py:30
+msgid "TiB"
+msgstr ""
+
+#: src/humanize/filesize.py:31
+msgid "PiB"
+msgstr ""
+
+#: src/humanize/filesize.py:32
+msgid "EiB"
+msgstr ""
+
+#: src/humanize/filesize.py:33
+msgid "ZiB"
+msgstr ""
+
+#: src/humanize/filesize.py:34
+msgid "YiB"
+msgstr ""
+
+#: src/humanize/filesize.py:35
+msgid "RiB"
+msgstr ""
+
+#: src/humanize/filesize.py:36
+msgid "QiB"
+msgstr ""
+
+#: src/humanize/filesize.py:98
+#, python-format
+msgid "%d Byte"
+msgstr ""
+
+#: src/humanize/filesize.py:101
+#, python-format
+msgid "%d Bytes"
+msgstr ""
