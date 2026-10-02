@@ -62,12 +62,32 @@ size or throughput. It is localized to:
 python3 -m pip install --upgrade humanize
 ```
 
+> **Note:** the PyPI `humanize` package is the upstream release and does not
+> include this fork's fixes. To use the fork, install [from source](#from-source).
+
 ### From source
 
 ```bash
 git clone https://github.com/talonwr/humanize
 cd humanize
 python3 -m pip install -e .
+```
+
+## Testing
+
+The test suite runs on a source checkout. Install the test extras, then run
+pytest:
+
+```bash
+python3 -m pip install -e .[tests]
+python3 -m pytest
+```
+
+Localization tests are skipped unless the compiled translation catalogs exist.
+Generate them first (requires gettext's `msgfmt`):
+
+```bash
+scripts/generate-translation-binaries.sh
 ```
 
 ## Usage
@@ -200,6 +220,17 @@ If seconds are too large, set `minimum_unit` to milliseconds or microseconds:
 ```
 
 ## Localization
+
+> **Note:** the repository ships only `.po` translation sources; the compiled
+> `.mo` catalogs that `i18n.activate()` needs are not committed. On a fresh
+> clone, generate them first (requires gettext's `msgfmt`):
+>
+> ```bash
+> scripts/generate-translation-binaries.sh
+> ```
+>
+> Without this, `activate()` raises
+> `FileNotFoundError: No translation file found for domain: 'humanize'`.
 
 How to change locale at runtime:
 
