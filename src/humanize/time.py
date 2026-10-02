@@ -46,6 +46,19 @@ class Unit(Enum):
         return NotImplemented
 
 
+def _unit_from_name(name: str, kind: str) -> Unit:
+    """Look up a time unit by name, raising ValueError for invalid names.
+
+    A bare KeyError (or AttributeError for non-string input) would leak an
+    unhelpful exception to callers, so both are converted to ValueError.
+    """
+    try:
+        return Unit[name.upper()]
+    except (KeyError, AttributeError):
+        msg = f"{kind} '{name}' not supported"
+        raise ValueError(msg) from None
+
+
 def _now() -> dt.datetime:
     import datetime as dt
 
@@ -139,7 +152,7 @@ def naturaldelta(
     """
     import datetime as dt
 
-    tmp = Unit[minimum_unit.upper()]
+    tmp = _unit_from_name(minimum_unit, "Minimum unit")
     if tmp not in (Unit.SECONDS, Unit.MILLISECONDS, Unit.MICROSECONDS):
         msg = f"Minimum unit '{minimum_unit}' not supported"
         raise ValueError(msg)
@@ -552,11 +565,11 @@ def precisedelta(
     if date is None:
         return str(value)
 
-    suppress_set = {Unit[s.upper()] for s in suppress}
+    suppress_set = {_unit_from_name(s, "Suppress unit") for s in suppress}
 
     # Find a suitable minimum unit (it can be greater than the one that the
     # user gave us, if that one is suppressed).
-    min_unit = Unit[minimum_unit.upper()]
+    min_unit = _unit_from_name(minimum_unit, "Minimum unit")
     min_unit = _suitable_minimum_unit(min_unit, suppress_set)
     del minimum_unit
 
