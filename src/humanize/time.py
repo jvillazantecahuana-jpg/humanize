@@ -139,7 +139,11 @@ def naturaldelta(
     """
     import datetime as dt
 
-    tmp = Unit[minimum_unit.upper()]
+    try:
+        tmp = Unit[minimum_unit.upper()]
+    except KeyError:
+        msg = f"Minimum unit '{minimum_unit}' not supported"
+        raise ValueError(msg) from None
     if tmp not in (Unit.SECONDS, Unit.MILLISECONDS, Unit.MICROSECONDS):
         msg = f"Minimum unit '{minimum_unit}' not supported"
         raise ValueError(msg)

@@ -851,6 +851,12 @@ def test_precisedelta_bogus_call() -> None:
     with pytest.raises(ValueError, match="Minimum unit 'years' not supported"):
         humanize.naturaldelta(1, minimum_unit="years")
 
+    with pytest.raises(ValueError, match="Minimum unit 'fortnights' not supported"):
+        humanize.naturaldelta(1, minimum_unit="fortnights")
+
+    with pytest.raises(ValueError, match="Minimum unit '' not supported"):
+        humanize.naturaltime(1, minimum_unit="")
+
 
 def test_time_unit() -> None:
     years, minutes = time.Unit["YEARS"], time.Unit["MINUTES"]
