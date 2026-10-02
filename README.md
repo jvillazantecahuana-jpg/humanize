@@ -76,19 +76,29 @@ python3 -m pip install -e .
 ## Testing
 
 The test suite runs on a source checkout. Install the test extras, then run
-pytest:
+pytest (use `--benchmark-disable` to skip the noisy benchmark table; note that
+`-p no:benchmark` breaks the benchmark tests instead):
 
 ```bash
-python3 -m pip install -e .[tests]
-python3 -m pytest
+python3 -m pip install -e ".[tests]"
+python3 -m pytest --benchmark-disable
 ```
 
+> **Note:** in zsh (the default macOS shell) the extras must be quoted —
+> unquoted, `.[tests]` fails with `no matches found`.
+
 Localization tests are skipped unless the compiled translation catalogs exist.
-Generate them first (requires gettext's `msgfmt`):
+Generate them first (run from the repository root; requires gettext's `msgfmt`
+on `PATH` — install with `brew install gettext` on macOS or
+`apt install gettext` on Debian/Ubuntu; note the Homebrew formula may not add
+`msgfmt` to `PATH` by itself):
 
 ```bash
 scripts/generate-translation-binaries.sh
 ```
+
+Without the catalogs a run looks green but is not full coverage: expect
+764 passed / 110 skipped. With the catalogs generated, expect 874 passed.
 
 ## Usage
 
@@ -221,9 +231,11 @@ If seconds are too large, set `minimum_unit` to milliseconds or microseconds:
 
 ## Localization
 
-> **Note:** the repository ships only `.po` translation sources; the compiled
-> `.mo` catalogs that `i18n.activate()` needs are not committed. On a fresh
-> clone, generate them first (requires gettext's `msgfmt`):
+> **Note:** a source checkout ships only `.po` translation sources; the compiled
+> `.mo` catalogs that `i18n.activate()` needs are not committed (the PyPI
+> wheel does ship compiled `.mo` catalogs). On a fresh clone, generate them
+> first, from the repository root (requires gettext's `msgfmt` on `PATH` —
+> `brew install gettext` on macOS, `apt install gettext` on Debian/Ubuntu):
 >
 > ```bash
 > scripts/generate-translation-binaries.sh
@@ -270,10 +282,11 @@ scripts/update-translations.sh
 This extracts new phrases from the source code into `humanize.pot`, merges them into
 each locale's `.po` file and compiles the binary `.mo` catalogs.
 
-How to add a new locale:
+How to add a new locale (run from the repository root; `humanize.pot` is created
+at the root by `scripts/update-translations.sh`):
 
 ```sh
-msginit -i humanize.pot -o humanize/locale/<locale name>/LC_MESSAGES/humanize.po --locale <locale name>
+msginit -i humanize.pot -o src/humanize/locale/<locale name>/LC_MESSAGES/humanize.po --locale <locale name>
 ```
 
 Where `<locale name>` is a locale abbreviation, eg. `en_GB`, `pt_BR` or just `ru`, `fr`
