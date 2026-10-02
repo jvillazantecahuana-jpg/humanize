@@ -5,6 +5,7 @@ from __future__ import annotations
 __lazy_modules__ = {"bisect"}
 
 import bisect
+import re
 
 from .i18n import _gettext as _
 from .i18n import _gettext_noop as N_
@@ -220,6 +221,25 @@ human_powers = (
 )
 
 
+_INTWORD_FIXED_FORMAT_RE = re.compile(r"%0?\.(\d+)f")
+
+
+def _round_half_even(numerator: int, denominator: int) -> int:
+    """Round ``numerator / denominator`` to the nearest integer, ties to even.
+
+    Exact integer arithmetic: unlike the float division it replaces, this does
+    not lose precision for large values. The tie-to-even rule matches the
+    printf-style formatting used for the mantissa.
+    """
+    quotient, remainder = divmod(numerator, denominator)
+    doubled = 2 * remainder
+    if doubled < denominator:
+        return quotient
+    if doubled > denominator:
+        return quotient + 1
+    return quotient if quotient % 2 == 0 else quotient + 1
+
+
 def intword(value: NumberOrString, format: str = "%.1f") -> str:
     """Converts a large integer to a friendly text representation.
 
@@ -279,6 +299,34 @@ def intword(value: NumberOrString, format: str = "%.1f") -> str:
     # Consider the biggest power of 10 that is smaller than value
     ordinal -= 1
     power = powers[ordinal]
+
+    fixed_format = _INTWORD_FIXED_FORMAT_RE.fullmatch(format)
+    if fixed_format is not None:
+        # Exact integer path (issue #2): computing the mantissa with float
+        # division loses precision above 2**53, so for values >= ~10**55 the
+        # formatted output showed the float's exact binary expansion instead
+        # of the true decimal digits. Rounding is round-half-even, matching
+        # the printf-style formatting used for the legacy path below.
+        decimals = int(fixed_format.group(1))
+        scale = 10**decimals
+        rounded_scaled = _round_half_even(value * scale, power)
+
+        if not largest_ordinal and rounded_scaled == scale * (powers[ordinal + 1] // power):
+            # After rounding, we end up just at the next power.
+            ordinal += 1
+            rounded_scaled = scale
+
+        singular, plural = human_powers[ordinal]
+        unit = _ngettext(singular, plural, -(-rounded_scaled // scale))
+        decimal_sep = decimal_separator()
+        whole, fraction = divmod(rounded_scaled, scale)
+        if decimals:
+            number = f"{whole}.{fraction:0{decimals}d}".replace(".", decimal_sep)
+        else:
+            number = str(whole)
+        return f"{negative_prefix}{number} {unit}"
+
+    # Legacy float path for formats outside "%.Nf" (widths, %g, %e, ...).
     chopped = value / power
     rounded_value = float(format % chopped)
 

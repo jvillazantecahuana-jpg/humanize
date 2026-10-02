@@ -202,6 +202,29 @@ def test_intword_rounding_rollover() -> None:
     assert humanize.intword(2 * 10**100) == "2.0 googol"
 
 
+def test_intword_huge_values_exact_mantissa() -> None:
+    """intword() must not emit float garbage for very large values (issue #2).
+
+    The mantissa was computed with float division, so for values >= ~10**55
+    the formatted output showed the float's exact binary expansion instead of
+    the true decimal digits (e.g. intword(10**56 - 1) rendered
+    '99999999999999991611392.0 decillion'). The mantissa is now computed with
+    exact integer arithmetic, and the carry into the next unit works exactly
+    too (10**100 - 1 rounds up to '1.0 googol').
+    """
+    assert humanize.intword(10**56 - 1) == "100000000000000000000000.0 decillion"
+    assert "91611392" not in humanize.intword(10**56 - 1)
+    assert humanize.intword(10**55 - 1) == "10000000000000000000000.0 decillion"
+    assert humanize.intword(10**100 - 1) == "1.0 googol"
+    assert humanize.intword(-(10**56 - 1)) == "-100000000000000000000000.0 decillion"
+    assert humanize.intword(10**56 - 1, "%.3f") == "100000000000000000000000.000 decillion"
+    assert humanize.intword(10**56 - 1, "%.0f") == "100000000000000000000000 decillion"
+    # Round-half-even must match the printf formatting it replaces.
+    assert humanize.intword(2500, "%.0f") == "2 thousand"
+    assert humanize.intword(1500, "%.0f") == "2 thousand"
+    assert humanize.intword(3500, "%.0f") == "4 thousand"
+
+
 @pytest.mark.parametrize(
     "test_input, expected",
     [
