@@ -91,6 +91,16 @@ def _date_and_delta(
             date = now - delta
         except (ValueError, TypeError):
             return None, value
+        except OverflowError:
+            # Mirror naturaldelta: non-finite values (inf/-inf) pass through
+            # unchanged and are rendered with str(value) by the callers, while
+            # too-large finite values still raise, per the documented
+            # OverflowError contract.
+            import math
+
+            if math.isfinite(value):
+                raise
+            return None, value
     return date, _abs_timedelta(delta)
 
 
