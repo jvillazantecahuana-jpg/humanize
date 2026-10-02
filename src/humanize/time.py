@@ -7,6 +7,7 @@ from __future__ import annotations
 
 __lazy_modules__ = {"humanize.i18n", "humanize.number"}
 
+import math
 from enum import Enum
 from functools import total_ordering
 
@@ -85,7 +86,9 @@ def _date_and_delta(
 ) -> tuple[Any, Any]:
     """Turn a value into a date and a timedelta which represents how long ago it was.
 
-    If that's not possible, return `(None, value)`.
+    If that's not possible, return `(None, value)`. Non-finite numeric values
+    (`inf`, `-inf`, `nan`) are returned unchanged as `(None, value)`; finite
+    values too large to convert raise `OverflowError`.
     """
     import datetime as dt
 
@@ -103,6 +106,14 @@ def _date_and_delta(
             delta = dt.timedelta(seconds=value)
             date = now - delta
         except (ValueError, TypeError):
+            return None, value
+        except OverflowError:
+            # Mirror naturaldelta: non-finite values (inf/-inf) pass through
+            # unchanged and are rendered with str(value) by the callers, while
+            # too-large finite values still raise, per the documented
+            # OverflowError contract.
+            if math.isfinite(value):
+                raise
             return None, value
     return date, _abs_timedelta(delta)
 
@@ -300,6 +311,12 @@ def naturaltime(
 
     Returns:
         str: A natural representation of the input in a resolution that makes sense.
+            Non-finite numeric values (`inf`, `-inf`, `nan`) are returned as
+            `str(value)`.
+
+    Raises:
+        OverflowError: If `value` is finite but too large to convert to a
+            `datetime.timedelta`.
     """
     import datetime as dt
 
@@ -560,6 +577,13 @@ def precisedelta(
     '0 minutes'
 
     ```
+
+    Non-finite numeric values (`inf`, `-inf`, `nan`) are returned as
+    `str(value)`.
+
+    Raises:
+        OverflowError: If `value` is finite but too large to convert to a
+            `datetime.timedelta`.
     """
     date, delta = _date_and_delta(value, precise=True)
     if date is None:
