@@ -32,7 +32,10 @@ from humanize.time import (
     precisedelta,
 )
 
-from ._version import __version__
+try:
+    from ._version import __version__
+except ImportError:  # source checkout, no build yet (hatch-vcs generates _version.py)
+    __version__ = "0.0.0+unknown"
 
 __all__ = [
     "__version__",
